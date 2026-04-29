@@ -5,20 +5,13 @@ a payout engine with a django backend, celery workers, postgres, redis, and a re
 ## Architecture Diagram
 
 ```mermaid
-flowchart lr
-  ui["react dashboard"]
-  api[django + drf api]
-  db[(postgres)]
-  cache[(redis)]
-  beat[celery beat]
-  worker[celery worker]
-
-  ui -->|http| api
-  api -->|transactions + locks| db
-  api -->|enqueue payout jobs| cache
-  beat -->|schedule retry/scan jobs| cache
-  cache --> worker
-  worker -->|state updates + ledger writes| db
+flowchart LR
+  A[React App] --> B[Django API]
+  B --> C[Postgres]
+  B --> D[Redis]
+  E[Beat] --> D
+  D --> F[Worker]
+  F --> C
 ```
 
 ## Architecture Decisions

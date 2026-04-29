@@ -17,22 +17,15 @@ the backend solves one core problem: create payouts safely without duplicate deb
 ## Architecture Diagram
 
 ```mermaid
-flowchart lr
-  client[frontend or api client]
-  api[payout apis in django]
-  svc[service layer]
-  db[(postgres)]
-  beat[celery beat]
-  broker[(redis)]
-  worker[celery worker]
-
-  client -->|post /payouts + idempotency-key| api
-  api -->|validate + auth| svc
-  svc -->|atomic hold + payout row + idempotency row| db
-  svc -->|enqueue job| broker
-  beat -->|schedule periodic tasks| broker
-  broker --> worker
-  worker -->|transition status + ledger updates| db
+flowchart LR
+  A[Frontend_Client] --> B[Django_API]
+  B --> C[Service_Layer]
+  C --> D[Postgres]
+  B --> E[Redis]
+  F[Celery_Beat] --> E
+  E --> G[Celery_Worker]
+  C --> D
+  G --> D
 ```
 
 ## What I Did

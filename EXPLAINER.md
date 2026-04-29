@@ -93,6 +93,16 @@ this is a money-moving system where correctness > features and architecture > ui
 - beat: schedules periodic scans for stuck/due payouts
 - frontend: merchant dashboard with balance display, payout history, ledger, activity log
 
+```mermaid
+flowchart LR
+  A[React_App] --> B[Django_API]
+  B --> C[Postgres]
+  B --> D[Redis]
+  E[Beat] --> D
+  D --> F[Worker]
+  F --> C
+```
+
 ### container alignment
 - verified postgres and redis container status before development.
 - used `postgresql_host=127.0.0.1` with mapped ports to avoid `ident` auth issues.
@@ -212,6 +222,16 @@ with transaction.atomic():
 - `pending → processing` (worker picks up)
 - `processing → completed` (settlement success)
 - `processing → failed` (settlement failure or max retries)
+
+```mermaid
+stateDiagram-v2
+  [*] --> Pending
+  Pending --> Processing
+  Processing --> Completed
+  Processing --> Failed
+  Completed --> [*]
+  Failed --> [*]
+```
 
 ### forbidden transitions
 - `completed → any state` (terminal)
@@ -820,34 +840,21 @@ play-to-pay/
 
 ## 22) Dependency Map
 
-```
-user action
-    │
-    ▼
-drf view (payouts view)
-    │
-    ▼
-idempotency middleware ─────────────────────┐
-    │                                        │
-    ▼                                        │ (cache hit)
-balance service                              │
-    │                                        │
-    ▼                                        │
-database (for update lock)                   │
-    │ ▼                                      │
-celery task enqueue ─────────────────────▶ return cached response
-    │
-    ▼
-celery worker
-    │
-    ▼
-settlement simulation
-    │
-    ├──▶ success ──▶ mark completed, debit ledger
-    │
-    ├──▶ failure ──▶ release funds, mark failed
-    │
-    └──▶ timeout ──▶ retry with backoff
+```mermaid
+flowchart TD
+  A[User] --> B[DRF_View]
+  B --> C[Idempotency_Middleware]
+  C -->|cache miss| D[Balance_Service]
+  C -->|cache hit| E[Return_Cached]
+  D --> F[DB_Lock]
+  F --> G[Enqueue_Task]
+  G --> H[Celery_Worker]
+  H --> I1[Success]
+  H --> I2[Failure]
+  H --> I3[Timeout]
+  I1 --> J1[Complete_Debit]
+  I2 --> J2[Release_Funds]
+  I3 --> J3[Retry_Backoff]
 ```
 
 ---
