@@ -10,8 +10,7 @@ export default function App() {
             <p className="text-sm text-slate-500">Payout engine dashboard</p>
           </div>
           <div className="text-sm text-slate-500">
-            <span>Merchant ID from </span>
-            <code className="rounded bg-slate-100 px-2 py-1">VITE_MERCHANT_ID</code>
+            <span>merchant selected in dashboard</span>
           </div>
         </div>
       </header>

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { apiFetch } from "../api/client.js";
 
-export default function PayoutForm({ bankAccounts, onCreated }) {
+export default function PayoutForm({ merchantId, bankAccounts, onCreated }) {
   const [amount, setAmount] = useState("");
   const [bankAccountId, setBankAccountId] = useState("");
   const [message, setMessage] = useState("");
@@ -9,8 +9,8 @@ export default function PayoutForm({ bankAccounts, onCreated }) {
   const [loading, setLoading] = useState(false);
 
   const canSubmit = useMemo(
-    () => !loading && amount && bankAccountId,
-    [loading, amount, bankAccountId]
+    () => !loading && merchantId && amount && bankAccountId,
+    [loading, merchantId, amount, bankAccountId]
   );
 
   const submit = async (event) => {
@@ -22,6 +22,7 @@ export default function PayoutForm({ bankAccounts, onCreated }) {
     try {
       const idempotencyKey = crypto.randomUUID();
       const response = await apiFetch("/payouts", {
+        merchantId,
         method: "POST",
         headers: {
           "Idempotency-Key": idempotencyKey,

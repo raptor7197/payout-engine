@@ -1,16 +1,21 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api/v1";
-const MERCHANT_ID = import.meta.env.VITE_MERCHANT_ID || "";
+const DEFAULT_MERCHANT_ID = import.meta.env.VITE_MERCHANT_ID || "";
 
 export async function apiFetch(path, options = {}) {
+  const { merchantId, ...requestOptions } = options;
+  const resolvedMerchantId =
+    merchantId === undefined ? DEFAULT_MERCHANT_ID : merchantId;
   const headers = {
     "Content-Type": "application/json",
-    "X-Merchant-Id": MERCHANT_ID,
-    ...options.headers,
+    ...requestOptions.headers,
   };
+  if (resolvedMerchantId) {
+    headers["X-Merchant-Id"] = String(resolvedMerchantId);
+  }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
+    ...requestOptions,
     headers,
   });
 
