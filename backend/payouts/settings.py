@@ -63,9 +63,20 @@ TEMPLATES = [
 WSGI_APPLICATION = "payouts.wsgi.application"
 ASGI_APPLICATION = "payouts.asgi.application"
 
+db_user = os.environ.get("PGUSER") or os.environ.get("POSTGRES_USER", "postgres")
+db_password = os.environ.get("PGPASSWORD") or os.environ.get(
+    "POSTGRES_PASSWORD", "postgres"
+)
+db_host = os.environ.get("PGHOST") or os.environ.get("POSTGRES_HOST", "localhost")
+db_port = os.environ.get("PGPORT") or os.environ.get("POSTGRES_PORT", "5432")
+db_name = os.environ.get("PGDATABASE") or os.environ.get("POSTGRES_DB", "playtopay")
+db_default_url = os.environ.get("DATABASE_URL") or (
+    f"postgres://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+)
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"postgres://{os.environ.get('POSTGRES_USER', 'postgres')}:{os.environ.get('POSTGRES_PASSWORD', 'postgres')}@{os.environ.get('POSTGRES_HOST', 'localhost')}:{os.environ.get('POSTGRES_PORT', '5432')}/{os.environ.get('POSTGRES_DB', 'playtopay')}",
+        default=db_default_url,
         conn_max_age=600,
         conn_health_checks=True,
     )
