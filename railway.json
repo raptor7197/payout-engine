@@ -1,15 +1,7 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
-  "build": {
-    "builder": "RAILPACK",
-    "watchPatterns": [
-      "/backend/**",
-      "/frontend/**",
-      "/railway.json"
-    ]
-  },
   "deploy": {
-    "startCommand": "python -c \"import os,time,sys,psycopg2;host=os.environ.get('POSTGRES_HOST');port=int(os.environ.get('POSTGRES_PORT','5432'));user=os.environ.get('POSTGRES_USER');password=os.environ.get('POSTGRES_PASSWORD');dbname=os.environ.get('POSTGRES_DB');ok=False\\nfor _ in range(60):\\n  try:\\n    conn=psycopg2.connect(host=host,port=port,user=user,password=password,dbname=dbname,connect_timeout=3);conn.close();ok=True;break\\n  except Exception:\\n    time.sleep(2)\\nif not ok:\\n  sys.exit('database not ready after wait timeout')\" && python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:$PORT",
+    "startCommand": "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:$PORT",
     "healthcheckPath": "/api/v1/health",
     "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE",
