@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from core.models import BankAccount, LedgerEntry, Payout
+from core.models import BankAccount, LedgerEntry, Merchant, Payout
 
 
 class BankAccountSerializer(serializers.ModelSerializer):
@@ -36,3 +36,9 @@ class LedgerEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = LedgerEntry
         fields = ["id", "entry_type", "amount_paise", "payout_id", "created_at"]
+
+
+class MerchantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Merchant
+        fields = ["id", "name", "email"]

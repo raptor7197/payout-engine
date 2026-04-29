@@ -6,14 +6,19 @@ from rest_framework.views import APIView
 from core.auth import AllowUnauthenticated
 from core.models import (
     BankAccount,
+    IdempotencyKey,
     IdempotencyState,
     LedgerEntry,
+    LedgerEntryType,
+    Merchant,
     MerchantBalance,
     Payout,
+    PayoutStateTransition,
 )
 from core.serializers import (
     BankAccountSerializer,
     LedgerEntrySerializer,
+    MerchantSerializer,
     PayoutCreateSerializer,
     PayoutSerializer,
 )
@@ -33,6 +38,15 @@ class HealthView(APIView):
 
     def get(self, request):
         return Response({"status": "ok"})
+
+
+class MerchantListView(APIView):
+    permission_classes = [AllowUnauthenticated]
+
+    def get(self, request):
+        merchants = Merchant.objects.order_by("id")
+        serializer = MerchantSerializer(merchants, many=True)
+        return Response(serializer.data)
 
 
 class MerchantSummaryView(APIView):
@@ -80,6 +94,98 @@ class LedgerListView(APIView):
         )
         serializer = LedgerEntrySerializer(entries, many=True)
         return Response(serializer.data)
+
+
+class ActivityLogView(APIView):
+    def get(self, request):
+        limit = 80
+        events = []
+
+        transitions = (
+            PayoutStateTransition.objects.filter(payout__merchant=request.user)
+            .select_related("payout")
+            .order_by("-created_at")[:limit]
+        )
+        for transition in transitions:
+            events.append(
+                {
+                    "id": f"transition:{transition.id}",
+                    "timestamp": transition.created_at,
+                    "source": "payout_transition",
+                    "message": (
+                        f"payout {transition.payout_id} moved "
+                        f"{transition.from_status} -> {transition.to_status} "
+                        f"by {transition.actor}"
+                    ),
+                    "details": {
+                        "payout_id": transition.payout_id,
+                        "from_status": transition.from_status,
+                        "to_status": transition.to_status,
+                        "actor": transition.actor,
+                    },
+                }
+            )
+
+        ledger_entries = (
+            LedgerEntry.objects.filter(merchant=request.user)
+            .select_related("payout")
+            .order_by("-created_at")[:limit]
+        )
+        for entry in ledger_entries:
+            entry_label = entry.entry_type
+            if entry.entry_type == LedgerEntryType.PAYOUT_HOLD:
+                entry_label = "payout funds held"
+            elif entry.entry_type == LedgerEntryType.PAYOUT_RELEASE:
+                entry_label = "payout funds released"
+            elif entry.entry_type == LedgerEntryType.PAYOUT_DEBIT_FINAL:
+                entry_label = "payout settled and debited"
+            elif entry.entry_type == LedgerEntryType.CREDIT:
+                entry_label = "merchant credited"
+
+            events.append(
+                {
+                    "id": f"ledger:{entry.id}",
+                    "timestamp": entry.created_at,
+                    "source": "ledger",
+                    "message": (
+                        f"{entry_label} ({entry.amount_paise / 100:.2f} inr)"
+                    ),
+                    "details": {
+                        "entry_type": entry.entry_type,
+                        "amount_paise": entry.amount_paise,
+                        "payout_id": entry.payout_id,
+                    },
+                }
+            )
+
+        idempotency_rows = IdempotencyKey.objects.filter(merchant=request.user).order_by(
+            "-updated_at"
+        )[:limit]
+        for record in idempotency_rows:
+            events.append(
+                {
+                    "id": f"idempotency:{record.id}",
+                    "timestamp": record.updated_at,
+                    "source": "idempotency",
+                    "message": (
+                        f"idempotency key {record.key} is {record.state}"
+                        + (
+                            f" (status {record.response_status_code})"
+                            if record.response_status_code is not None
+                            else ""
+                        )
+                    ),
+                    "details": {
+                        "key": record.key,
+                        "state": record.state,
+                        "response_status_code": record.response_status_code,
+                        "resource_id": record.resource_id,
+                    },
+                }
+            )
+
+        events.sort(key=lambda event: event["timestamp"], reverse=True)
+        return Response(events[:limit])
 
 
 class PayoutListCreateView(APIView):
