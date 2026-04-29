@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from celery import shared_task
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 
 from core.models import IdempotencyKey, Payout, PayoutStatus
@@ -29,9 +30,14 @@ def process_pending_payouts():
 @shared_task
 def retry_stuck_payouts():
     now = timezone.now()
+    timeout_threshold = now - timedelta(seconds=30)
     payouts = (
-        Payout.objects.filter(
-            status=str(PayoutStatus.PROCESSING), next_retry_at__lte=now
+        Payout.objects.filter(status=str(PayoutStatus.PROCESSING))
+        .filter(
+            Q(next_retry_at__lte=now)
+            | Q(
+                next_retry_at__isnull=True, processing_started_at__lte=timeout_threshold
+            )
         )
         .order_by("next_retry_at")
         .values_list("id", flat=True)[:50]
