@@ -6,7 +6,7 @@ a payout engine with a django backend, celery workers, postgres, redis, and a re
 
 ```mermaid
 flowchart lr
-  ui[react dashboard]
+  ui["react dashboard"]
   api[django + drf api]
   db[(postgres)]
   cache[(redis)]
