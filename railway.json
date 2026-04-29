@@ -2,16 +2,14 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "RAILPACK",
-    "buildCommand": "bash railway/build.sh",
     "watchPatterns": [
       "/backend/**",
       "/frontend/**",
-      "/railway.json",
-      "/railway/**"
+      "/railway.json"
     ]
   },
   "deploy": {
-    "startCommand": "bash railway/start.sh",
+    "startCommand": "python manage.py migrate && python manage.py runserver 0.0.0.0:$PORT",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
