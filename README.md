@@ -14,7 +14,7 @@ flowchart LR
 ```
 
 ## System Design Diagram
-![Architecture Diagram](Arch Diagram.svg)
+![Architecture Diagram](Arch%20Diagram.svg)
 
 
 ## Architecture Decisions
