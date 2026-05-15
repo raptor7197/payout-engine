@@ -35,7 +35,8 @@ flowchart LR
 
 ## Detailed Backend Notes
 
-- full backend explanation is in [backend/README.md](backend/README.md).
+- full backend explanation is in [backend/README.md](backend/README.md) & [Explainer.md](/EXPLAINER.md)
+)].
 
 ## Quick Run
 
