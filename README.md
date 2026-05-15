@@ -1,6 +1,5 @@
-# Playto Pay Founding engineer Task 
 
-a payout engine with a django backend, celery workers, postgres, redis, and a react dashboard.
+# a payout engine with a django backend, celery workers, postgres, redis, and a simple react dashboard.
 
 ## Architecture Diagram
 
