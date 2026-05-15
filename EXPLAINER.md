@@ -1,6 +1,6 @@
-# Playto Pay — Comprehensive Explainer
+# Payout Engine — Comprehensive Explainer
 
-this document consolidates design and implementation decision that i took for this projetc 
+this document consolidates design and implementation decision that i took for this project
 
 demo link : https://drive.google.com/file/d/1s5idP4RBVRccNpUXCGr_Q20cLrNs4wOy/view?usp=sharing
 ---
