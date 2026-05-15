@@ -14,7 +14,7 @@ flowchart LR
 ```
 
 ## System Design Diagram
-![Architecture Diagram](Arch%20Diagram.svg)
+![Architecture Diagram](Payout%20Engine.png)
 
 
 ## Architecture Decisions
