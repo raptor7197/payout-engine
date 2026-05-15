@@ -13,6 +13,10 @@ flowchart LR
   F --> C
 ```
 
+## System Design Diagram
+![Architecture Diagram](Arch Diagram.svg)
+
+
 ## Architecture Decisions
 
 - i used postgres as the source of truth because payouts need strict consistency, row-level locking, and safe transactions.
