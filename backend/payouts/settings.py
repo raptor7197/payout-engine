@@ -90,6 +90,9 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
+STATIC_ROOT = os.environ.get(
+    "DJANGO_STATIC_ROOT", str(BASE_DIR / "staticfiles")
+)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 TEST_RUNNER = "core.test_runner.CoreTestRunner"

@@ -1,0 +1,15 @@
+.git
+.gitignore
+**/__pycache__
+**/*.pyc
+**/*.pyo
+.ruff_cache
+backend/staticfiles
+backend/.env
+frontend/node_modules
+frontend/dist
+docs
+*.png
+*.mp4
+LOGS.png
+LOG

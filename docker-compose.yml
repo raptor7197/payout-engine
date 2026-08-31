@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: playtopay
+      DJANGO_SECRET_KEY: dev-secret
+      DJANGO_DEBUG: "false"
+      DJANGO_ALLOWED_HOSTS: "*"
+
+volumes:
+  pgdata:
