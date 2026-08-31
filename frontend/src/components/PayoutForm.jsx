@@ -10,7 +10,7 @@ export default function PayoutForm({ merchantId, bankAccounts, onCreated }) {
 
   const canSubmit = useMemo(
     () => !loading && merchantId && amount && bankAccountId,
-    [loading, merchantId, amount, bankAccountId]
+    [loading, merchantId, amount, bankAccountId],
   );
 
   const submit = async (event) => {
@@ -43,26 +43,36 @@ export default function PayoutForm({ merchantId, bankAccounts, onCreated }) {
     }
   };
 
+  const inputClass =
+    "mt-1 w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-600 focus:border-neutral-500 focus:outline-none";
+
   return (
-    <div className="rounded-lg border bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-semibold">Create payout</h2>
-      <form className="mt-4 grid gap-4 sm:grid-cols-3" onSubmit={submit}>
+    <section className="rounded-md border border-neutral-800 bg-neutral-900 p-5">
+      <header className="mb-4">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-400">
+          Create payout
+        </h2>
+      </header>
+      <form className="grid gap-4 sm:grid-cols-3" onSubmit={submit}>
         <div className="sm:col-span-1">
-          <label className="text-sm font-medium text-slate-600">Amount (₹)</label>
+          <label className="text-xs uppercase tracking-wide text-neutral-500">
+            Amount (₹)
+          </label>
           <input
-            className="mt-1 w-full rounded border px-3 py-2 text-sm"
+            className={inputClass}
             type="number"
             min="1"
+            placeholder="0"
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
           />
         </div>
         <div className="sm:col-span-1">
-          <label className="text-sm font-medium text-slate-600">
+          <label className="text-xs uppercase tracking-wide text-neutral-500">
             Bank account
           </label>
           <select
-            className="mt-1 w-full rounded border px-3 py-2 text-sm"
+            className={inputClass}
             value={bankAccountId}
             onChange={(event) => setBankAccountId(event.target.value)}
           >
@@ -76,7 +86,7 @@ export default function PayoutForm({ merchantId, bankAccounts, onCreated }) {
         </div>
         <div className="flex items-end">
           <button
-            className="w-full rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            className="w-full rounded-md border border-neutral-200 bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-900 transition-colors hover:bg-white disabled:cursor-not-allowed disabled:border-neutral-700 disabled:bg-neutral-800 disabled:text-neutral-500"
             type="submit"
             disabled={!canSubmit}
           >
@@ -84,8 +94,10 @@ export default function PayoutForm({ merchantId, bankAccounts, onCreated }) {
           </button>
         </div>
       </form>
-      {message && <p className="mt-3 text-sm text-emerald-600">{message}</p>}
-      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-    </div>
+      {message && (
+        <p className="mt-3 text-sm text-emerald-400">{message}</p>
+      )}
+      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+    </section>
   );
 }

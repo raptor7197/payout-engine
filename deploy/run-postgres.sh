@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+exec > /proc/1/fd/1 2>&1
+
 PG_BIN=$(ls -d /usr/lib/postgresql/*/bin | tail -1)
 PGDATA=/var/lib/postgresql/data
 

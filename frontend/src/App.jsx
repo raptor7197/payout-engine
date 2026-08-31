@@ -17,23 +17,27 @@ export default function App() {
         ? "fallback mode"
         : "checking backend";
 
-  const statusClass =
+const statusClass =
     backendMode === "backend"
-      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+      ? "border-emerald-700 bg-emerald-950 text-emerald-300"
       : backendMode === "fallback"
-        ? "border-amber-200 bg-amber-50 text-amber-700"
-        : "border-slate-200 bg-slate-50 text-slate-600";
+        ? "border-amber-700 bg-amber-950 text-amber-300"
+        : "border-neutral-700 bg-neutral-900 text-neutral-400";
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b bg-white">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100">
+      <header className="border-b border-neutral-800 bg-neutral-900">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div>
-            <h1 className="text-xl font-semibold">Playto Pay</h1>
-            <p className="text-sm text-slate-500">Payout engine dashboard</p>
+            <h1 className="text-xl font-semibold tracking-tight text-neutral-50">
+              Playto Pay
+            </h1>
+            <p className="text-sm text-neutral-400">Payout engine dashboard</p>
           </div>
           <div className="text-sm">
-            <span className={`rounded border px-2 py-1 ${statusClass}`}>
+            <span
+              className={`rounded border px-2.5 py-1 font-mono text-xs uppercase tracking-wide ${statusClass}`}
+            >
               {statusLabel}
             </span>
           </div>

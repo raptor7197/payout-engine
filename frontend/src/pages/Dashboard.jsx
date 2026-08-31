@@ -82,15 +82,19 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+{error && (
+        <div className="rounded-md border border-red-800 bg-red-950 p-4 text-red-300">
           {error}
         </div>
       )}
-      <div className="rounded-lg border bg-white p-5 shadow-sm">
-        <label className="text-sm font-medium text-slate-600">Merchant</label>
+      <section className="rounded-md border border-neutral-800 bg-neutral-900 p-5">
+        <header className="mb-4">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-neutral-400">
+            Merchant
+          </h2>
+        </header>
         <select
-          className="mt-1 w-full rounded border px-3 py-2 text-sm sm:max-w-sm"
+          className="w-full rounded-md border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-neutral-500 focus:outline-none sm:max-w-sm"
           value={merchantId}
           onChange={(event) => setMerchantId(event.target.value)}
         >
@@ -98,10 +102,10 @@ export default function Dashboard() {
           {merchants.map((merchant) => (
             <option key={merchant.id} value={merchant.id}>
               {merchant.id} - {merchant.name}
-            </option>
+</option>
           ))}
         </select>
-      </div>
+      </section>
       <BalanceCard summary={summary} loading={loading} />
       <PayoutForm
         key={merchantId}

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+exec > /proc/1/fd/1 2>&1
+
 cd /app/backend
 
 for i in $(seq 1 30); do
